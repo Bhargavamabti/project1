@@ -1,0 +1,121 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden; /* ✅ keep only vertical scrollbar */
+}
+
+/* Navbar */
+.navi {
+    height: 60px;
+    width: 100%;
+    background-color: rgb(0, 0, 0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+#navipara{
+
+    background: linear-gradient(90deg, #ffffff, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+li {
+    list-style: none;
+}
+a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}
+
+#home{
+
+      color: #f8d703;
+
+      font-weight: bolder;
+      text-shadow: 0 0 5px rgb(255, 239, 11), 0 0 15px rgb(253, 214, 18), 0 0 25px rgb(249, 218, 17);
+    }
+.list ul {
+    display: flex;
+    gap: 20px;
+}
+
+.hero {
+    width: 100%;
+    height: 60vh;       /* height of banner */
+    overflow: hidden;
+}
+
+.hero img {
+    width: 100%;
+    height: 100%;
+    /* object-fit: cover;  keeps image nicely scaled */
+    display: block;
+}
+
+
+
+
+/* Main body */
+.mainbody {
+    background-color: rgb(254, 200, 7);
+    min-height: calc(100vh - 60px); /* ✅ instead of fixed 92vh */
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px; /* ✅ spacing without breaking layout */
+}
+
+/* Row (not really needed here, but kept) */
+.row {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+/* Box */
+.box1 {
+    flex: 1 1 calc(25% - 20px); /* ✅ fits 4 in row, auto wraps */
+    max-width: 350px;           /* ✅ avoids stretching too wide */
+    height: 290px;
+    background: #fff;
+    margin: 10px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+}
+
+.box1 img {
+    width: 100%;
+    height: 80%;
+    border-radius: 15px 15px 0 0;
+}
+
+h3 {
+    margin: 0;
+}
+
+footer  {
+    height: 100px;
+    background-color: black;   /* Dark background */
+    color: white;     
+    display: flex; 
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;       /* White text */
+    text-align: center;       /* Center the text */
+    padding: 15px 0;          /* Top & bottom padding */
+    width: 100%;              /* Full width */
+    position: relative;       /* So it stays below content */
+    bottom: 0;
+}

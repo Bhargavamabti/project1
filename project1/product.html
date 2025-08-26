@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EcoThreads — Product</title>
+  <link rel="stylesheet" href="product.css" />
+</head>
+<body>
+  <!-- NAV -->
+    <nav class="navi">
+    <p id="navipara">ECO THREADS</p>
+    <div class="list">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a  href="history.html">History</a></li>
+        <li><a id="product" href="product.html">Product Log</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- PRODUCT SECTION -->
+  <main class="container product-page" id="main">
+    <section class="product-grid">
+      <!-- LEFT: gallery -->
+      <div class="gallery">
+        <div class="main-image-wrap">
+          <img id="mainImage" src="" alt="Product image" />
+        </div>
+
+        <div class="thumbs" id="thumbs" aria-label="Product gallery thumbnails">
+          <!-- thumbnails inserted by JS -->
+        </div>
+      </div>
+
+      <!-- RIGHT: info card (glass) -->
+      <aside class="info-card" role="region" aria-labelledby="productTitle">
+        <h1 id="productTitle" class="product-title">Loading…</h1>
+        <div class="meta">
+          <div class="price" id="productPrice">$0</div>
+          <div class="rating" id="productRating" aria-hidden="true">★★★★★</div>
+        </div>
+
+        <p class="short-desc" id="productShort">—</p>
+
+        <div class="selectors">
+          <div class="selector">
+            <label for="size">Size</label>
+            <div id="sizes" class="size-list" role="radiogroup" aria-label="Choose size">
+              <!-- size buttons inserted by JS -->
+            </div>
+          </div>
+
+          <div class="selector">
+            <label for="quantity">Quantity</label>
+            <div class="qty">
+              <button id="qtyDec" class="qty-btn" aria-label="Decrease quantity">−</button>
+              <input id="qtyInput" type="number" min="1" value="1" />
+              <button id="qtyInc" class="qty-btn" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="addToCart" class="btn primary">Add to cart</button>
+          <button id="buyNow" class="btn outline">Buy now</button>
+        </div>
+
+        <div class="extra-info">
+          <small><strong>SKU:</strong> <span id="productSKU">—</span></small>
+          <small><strong>Material:</strong> <span id="productMaterial">—</span></small>
+        </div>
+      </aside>
+    </section>
+
+    <!-- TABS -->
+    <section class="tabs" id="tabs">
+      <div class="tab-buttons" role="tablist" aria-label="Product information tabs">
+        <button data-tab="desc" class="tab-btn active">Description</button>
+        <button data-tab="details" class="tab-btn">Details</button>
+        <button data-tab="shipping" class="tab-btn">Shipping</button>
+      </div>
+      <div class="tab-panels">
+        <div id="desc" class="tab-panel active" role="tabpanel">
+          <p id="tabDescription">—</p>
+        </div>
+        <div id="details" class="tab-panel" role="tabpanel">
+          <ul id="tabDetails"></ul>
+        </div>
+        <div id="shipping" class="tab-panel" role="tabpanel">
+          <p>Ships in 2–5 business days. Free returns within 14 days.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RELATED -->
+    <section class="related" aria-label="Related products">
+      <h2>Related products</h2>
+      <div id="relatedGrid" class="related-grid">
+        <!-- related product cards inserted by JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+ <footer>
+    <p>© <span id="year"></span> Eco Threads | ALL Rights Reserved by PICUBE</p>
+  </footer>
+
+  <!-- Your products array file -->
+  <script src="product.js"></script>
+
+  <!-- Page script: populate UI from products[] and add interactions -->
+  <script>
+    /* --- Configuration & helpers --- */
+    const qs = new URLSearchParams(location.search);
+    const id = parseInt(qs.get('id')) || 1; // fallback id=1
+    const product = (typeof products !== 'undefined') ? products.find(p => p.id === id) : null;
+    const container = document.getElementById('main');
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function createEl(tag,className,attrs){ const e=document.createElement(tag); if(className) e.className=className; if(attrs) Object.assign(e,attrs); return e; }
+
+    if(!product){
+      container.innerHTML = '<p style="padding:40px">Product not found. Check the link or product list.</p>';
+    } else {
+      // populate images: main image + optional gallery array (fallback to single image)
+      const galleryImages = product.images && product.images.length ? product.images : [product.image];
+      const mainImage = document.getElementById('mainImage');
+      const thumbs = document.getElementById('thumbs');
+
+      mainImage.src = galleryImages[0];
+      mainImage.alt = product.name;
+
+      galleryImages.forEach((src, i) => {
+        const t = createEl('button','thumb');
+        t.setAttribute('aria-label','Show image '+(i+1));
+        const img = createEl('img');
+        img.src = src;
+        img.alt = product.name + ' thumbnail ' + (i+1);
+        t.appendChild(img);
+        t.addEventListener('click', () => {
+          mainImage.src = src;
+          // active thumb style:
+          thumbs.querySelectorAll('.thumb').forEach(tb=>tb.classList.remove('active'));
+          t.classList.add('active');
+        });
+        if(i===0) t.classList.add('active');
+        thumbs.appendChild(t);
+      });
+
+      // title, price, short description
+      document.getElementById('productTitle').textContent = product.name;
+      document.getElementById('productPrice').textContent = product.price;
+      document.getElementById('productShort').textContent = product.short || product.description.slice(0,120) + '…';
+      document.getElementById('productSKU').textContent = product.sku || ('ET-' + (product.id || '000'));
+      document.getElementById('productMaterial').textContent = product.material || '—';
+      document.getElementById('tabDescription').textContent = product.description;
+
+      // details list (if exists)
+      const detailsEl = document.getElementById('tabDetails');
+      if(product.details && product.details.length){
+        product.details.forEach(d=>{
+          const li = document.createElement('li');
+          li.textContent = d;
+          detailsEl.appendChild(li);
+        });
+      } else {
+        detailsEl.innerHTML = '<li>Made with sustainable materials.</li><li>Machine wash cold.</li>';
+      }
+
+      // rating (simple)
+      document.getElementById('productRating').textContent = '★'.repeat(Math.round(product.rating||4)) + '☆'.repeat(5 - Math.round(product.rating||4));
+
+      // sizes (if available)
+      const sizesWrap = document.getElementById('sizes');
+      (product.sizes || ['S','M','L','XL']).forEach((s,i)=>{
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'size';
+        b.textContent = s;
+        b.dataset.size = s;
+        if(i===0) b.classList.add('selected');
+        b.addEventListener('click', ()=> {
+          sizesWrap.querySelectorAll('.size').forEach(x=>x.classList.remove('selected'));
+          b.classList.add('selected');
+        });
+        sizesWrap.appendChild(b);
+      });
+
+      // qty controls
+      const qtyInput = document.getElementById('qtyInput');
+      document.getElementById('qtyInc').addEventListener('click', ()=> qtyInput.value = Number(qtyInput.value) + 1);
+      document.getElementById('qtyDec').addEventListener('click', ()=> { if(Number(qtyInput.value) > 1) qtyInput.value = Number(qtyInput.value) - 1; });
+
+      // add to cart (demo)
+      document.getElementById('addToCart').addEventListener('click', ()=>{
+        const size = document.querySelector('#sizes .size.selected')?.dataset.size || null;
+        const qty = Number(qtyInput.value);
+        const payload = { id: product.id, name: product.name, size, qty, price: product.price };
+        // placeholder action
+        console.log('Add to cart:', payload);
+        alert(`${product.name} added to cart (${qty}${size? ' • ' + size : ''})`);
+      });
+
+      document.getElementById('buyNow').addEventListener('click', ()=> {
+        alert('Buy now — checkout flow not implemented in demo.');
+      });
+
+      // tabs
+      document.querySelectorAll('.tab-btn').forEach(btn=>{
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+          document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+      });
+
+      // related products: show up to 4 other items
+      const relatedGrid = document.getElementById('relatedGrid');
+      const related = (typeof products !== 'undefined') ? products.filter(p => p.id !== product.id).slice(0,4) : [];
+      related.forEach(r => {
+        const card = createEl('a','related-card',{ href: 'product.html?id=' + r.id, title: r.name });
+        const img = createEl('img');
+        img.src = (r.image || (r.images && r.images[0])) || 'images/placeholder.png';
+        img.alt = r.name;
+        const h = createEl('h3');
+        h.textContent = r.name;
+        const p = createEl('div','rel-price');
+        p.textContent = r.price || '';
+        card.appendChild(img);
+        card.appendChild(h);
+        card.appendChild(p);
+        relatedGrid.appendChild(card);
+      });
+    }
+
+    // small accessibility: focus outline for keyboard users
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Tab') document.body.classList.add('user-tab');
+    }, { once: true });
+  </script>
+</body>
+</html>
